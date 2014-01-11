@@ -1,1 +1,1 @@
-exportClasses(booli)
+export(booli)

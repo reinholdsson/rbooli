@@ -11,7 +11,4 @@ R Booli API Wrapper
 ## Example
 
     a <- booli("your_id", "your_key")
-    sold <- a$get(path = "sold", q = "vasastan")
-
-## Todo
-- Check if data column is character, date or numeric (and automatically convert them)
+    data <- a$get(path = "sold", q = "vasastan")

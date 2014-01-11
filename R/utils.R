@@ -21,9 +21,9 @@ list_to_table <- function(x, ...) {
 #' @param x data.frame
 fix_data <- function(x) {
   suppressWarnings(
-    colwise(function(x) {
+    colwise(function(col) {
       # char -> numeric for numerical columns
-      if (all(!is.na(as.numeric(x)))) as.numeric(x) else x
-    })(sold)
+      if (all(!is.na(as.numeric(col)))) as.numeric(col) else col
+    })(x)
   )
 }

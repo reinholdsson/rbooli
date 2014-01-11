@@ -20,10 +20,16 @@ list_to_table <- function(x, ...) {
 #' 
 #' @param x data.frame
 fix_data <- function(x) {
-  suppressWarnings(
+  suppressWarnings({
     colwise(function(col) {
-      # char -> numeric for numerical columns
-      if (all(!is.na(as.numeric(col)))) as.numeric(col) else col
+      # return if all na
+      if (all(is.na(col))) col
+      # char -> numeric
+      else if (all(is.na(col) | !is.na(as.numeric(col)))) as.numeric(col)
+      # char -> date
+      else if (all(is.na(col) | grepl("^\\d\\d\\d\\d-\\d\\d-\\d\\d", col))) as.Date(col)
+      # if no match, return as is
+      else col
     })(x)
-  )
+  })
 }

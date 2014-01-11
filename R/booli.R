@@ -35,19 +35,20 @@ booli <- setRefClass("booli",
       hash <- python.get('hashstr')
       
       # Query data
-      query <- list(
+      url <- modify_url(url = "http://api.booli.se", path = path, query = list(
         callerId = .self$id,
         unique = unique,
         hash = hash,
         time = time,
         ...
-      )
-      
-      url <- modify_url(url = "http://api.booli.se", path = path, query = query)
+      ))
       res <- content(GET(url))[[path]]
-      res <- list_to_table(res, stringsAsFactors = F)
-      return(res)
       
+      # Fix data structure
+      res <- list_to_table(res, stringsAsFactors = F)
+      res <- fix_data(res)
+      
+      return(res)
     }
   )
 )

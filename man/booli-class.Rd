@@ -18,6 +18,7 @@ Returns a data frame with Booli data
 a <- booli("YOUR_CALLERID", "YOUR_APIKEY")
 listings <- a$get(path = "listings", q = "nacka", limit = 5, offset = 0)
 sold <- a$get(path = "sold", q = "nacka", limit = 5, offset = 0)
+all_listings <- a$get_all(path = "listings", q = "stockholm")
 }
 }
 

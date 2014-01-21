@@ -11,6 +11,7 @@
 #' a <- booli("YOUR_CALLERID", "YOUR_APIKEY")
 #' listings <- a$get(path = "listings", q = "nacka", limit = 5, offset = 0)
 #' sold <- a$get(path = "sold", q = "nacka", limit = 5, offset = 0)
+#' all_listings <- a$get_all(path = "listings", q = "stockholm")
 #' }
 #' 
 #' @export
@@ -45,10 +46,25 @@ booli <- setRefClass("booli",
       res <- content(GET(url))[[path]]
       
       # Fix data structure
-      res <- list_to_table(res, stringsAsFactors = F)
-      res <- fix_data(res)
-      
-      return(res)
+      if (length(res) > 0) {
+        res <- list_to_table(res, stringsAsFactors = F)
+        res <- fix_data(res)
+        return(res)
+      } else return(NULL)
+    },
+    # Get all pages
+    get_all = function (...) {
+      i <- 0
+      stp <- 0
+      data <- NULL
+      while (stp < 1) {
+        d <- .self$get(..., limit = 500, offset = i * 500)
+        if (!is.null(d)) {
+          data <- if (i == 0) d else rbind.fill(data, d)
+          i <- i + 1
+        } else stp <- 1
+      }
+      return(data)
     }
   )
 )

@@ -9,9 +9,12 @@
 #' 
 #' @examples \dontrun{
 #' a <- booli("YOUR_CALLERID", "YOUR_APIKEY")
+#' # Get data
 #' listings <- a$get(path = "listings", q = "nacka", limit = 5, offset = 0)
 #' sold <- a$get(path = "sold", q = "nacka", limit = 5, offset = 0)
-#' all_listings <- a$get_all(path = "listings", q = "stockholm")
+#' 
+#' # Get 5000 listings
+#' all_listings <- a$get_all(path = "listings", q = "stockholm", max_limit = 5000)
 #' }
 #' 
 #' @export
@@ -53,12 +56,13 @@ booli <- setRefClass("booli",
       } else return(NULL)
     },
     # Get all pages
-    get_all = function (...) {
+    get_all = function (..., max_limit = 5000) {
+      n <- 500
       i <- 0
       stp <- 0
       data <- NULL
-      while (stp < 1) {
-        d <- .self$get(..., limit = 500, offset = i * 500)
+      while (stp < 1 && i * n < max_limit) {
+        d <- .self$get(..., limit = n, offset = i * n)
         if (!is.null(d)) {
           data <- if (i == 0) d else rbind.fill(data, d)
           i <- i + 1

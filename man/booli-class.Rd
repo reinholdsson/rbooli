@@ -16,9 +16,12 @@ Returns a data frame with Booli data
 \examples{
 \dontrun{
 a <- booli("YOUR_CALLERID", "YOUR_APIKEY")
+# Get data
 listings <- a$get(path = "listings", q = "nacka", limit = 5, offset = 0)
 sold <- a$get(path = "sold", q = "nacka", limit = 5, offset = 0)
-all_listings <- a$get_all(path = "listings", q = "stockholm")
+
+# Get 5000 listings
+all_listings <- a$get_all(path = "listings", q = "stockholm", max_limit = 5000)
 }
 }
 

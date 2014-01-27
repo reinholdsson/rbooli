@@ -2,21 +2,23 @@
 #' 
 #' Returns a data frame with Booli data
 #' 
-#' @param callerId caller id
+#' @param id caller id
 #' @param key private api key
-#' @param ... arguments passed on to the http get request;
+#' @param path object type; "listings" (default) or "sold"
+#' @param limit max observations to be returned from api (default: 500)
+#' @param ... additional arguments sent to the http get request;
 #' for possible parameters, see http://www.booli.se/api/
 #' 
 #' @examples \dontrun{
 #' a <- booli("YOUR_CALLERID", "YOUR_APIKEY")
-#' # Get data
-#' listings <- a$get(path = "listings", q = "nacka", limit = 5, offset = 0)
-#' sold <- a$get(path = "sold", q = "nacka", limit = 5, offset = 0)
 #' 
-#' # Get 5000 listings
-#' all_listings <- a$get_all(path = "listings", q = "stockholm", max_limit = 5000)
+#' # Get currently listed apartments in Nacka (default limit is 500)
+#' x <- a$get(path = "listings", q = "nacka")
+#' 
+#' # Get latest 1200 sold apartments in Stockholm
+#' x <- a$get(path = "sold", q = "stockholm", limit = 1200)
 #' }
-#' 
+#' @aliases booli rbooli
 #' @export
 booli <- setRefClass("booli", 
   fields = list(
@@ -28,45 +30,55 @@ booli <- setRefClass("booli",
       .self$id <- id
       .self$key <- key
     },
-    get = function(path = "listings", ...) {
-      # Set up variables
-      time <- as.integer(Sys.time())
-      unique <- tolower(paste(sample(c(1:9, LETTERS), 16), collapse = ""))
+    get = function(path = "listings", limit = 500, ...) {
       
-      # Create hash with Python
-      python.exec('from hashlib import sha1')
-      python.exec(sprintf('hashstr = sha1("%s"+"%s"+"%s"+"%s").hexdigest()', .self$id, time, .self$key, unique))
-      hash <- python.get('hashstr')
-      
-      # Query data
-      url <- modify_url(url = "http://api.booli.se", path = path, query = list(
-        callerId = .self$id,
-        unique = unique,
-        hash = hash,
-        time = time,
-        ...
-      ))
-      res <- content(GET(url))[[path]]
-      
-      # Fix data structure
-      if (length(res) > 0) {
-        res <- list_to_table(res, stringsAsFactors = F)
-        res <- fix_data(res)
-        return(res)
-      } else return(NULL)
-    },
-    # Get all pages
-    get_all = function (..., max_limit = 5000) {
-      n <- 500
-      i <- 0
-      stp <- 0
-      data <- NULL
-      while (stp < 1 && i * n < max_limit) {
-        d <- .self$get(..., limit = n, offset = i * n)
-        if (!is.null(d)) {
-          data <- if (i == 0) d else rbind.fill(data, d)
-          i <- i + 1
-        } else stp <- 1
+      # Make several api calls due to pagination
+      if (limit > .call_limit) {
+        
+        # Setup temporary variables
+        t <- limit; stp <- 0; data <- NULL
+        
+        # Get 500 obs. per call, until limit has been reached
+        while (stp < 1 && t > 0) {
+          d <- .self$get(..., limit = pmin(t, .call_limit), offset = limit - t)
+          if (!is.null(d)) {
+            data <- if (limit == t) d else rbind.fill(data, d)
+            t <- t - .call_limit
+          } else stp <- 1
+        }
+        
+      # If less than max limit, call api for data
+      } else {
+        
+        # Set up variables
+        time <- as.integer(Sys.time())
+        unique <- tolower(paste(sample(c(1:9, LETTERS), 16), collapse = ""))
+        
+        # Create hash with Python
+        python.exec('from hashlib import sha1')
+        python.exec(sprintf('hashstr = sha1("%s"+"%s"+"%s"+"%s").hexdigest()', .self$id, time, .self$key, unique))
+        hash <- python.get('hashstr')
+        
+        # Prepare url
+        url <- modify_url(url = "http://api.booli.se", path = path, query = list(
+          callerId = .self$id,
+          unique = unique,
+          hash = hash,
+          time = time,
+          limit = limit,
+          ...
+        ))
+        
+        # Query data
+        data <- content(GET(url))[[path]]
+        
+        # Fix data structure
+        if (length(data) > 0) {
+          data <- list_to_table(data, stringsAsFactors = F)
+          data <- fix_data(data)
+        } else {
+          return(NULL)
+        }
       }
       return(data)
     }

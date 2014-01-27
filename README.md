@@ -1,17 +1,20 @@
 rbooli
 ======
 
-R Booli API Wrapper. For API documentation (in swedish) see: http://www.booli.se/api/.
+This package is an R wrapper for the Booli API. More documentation about the API is available in Swedish at [http://www.booli.se/api/](http://www.booli.se/api/).
 
 ## Install
 
     library(devtools)
     install_github("rbooli", "reinholdsson")
 
+Before getting started, you have to read and accept Booli's [Terms of Use](http://www.booli.se/api/tou/) and then finally register to receive an [API key](http://www.booli.se/api/key) by e-mail.
+
 ## Example
 
-    a <- booli("your_id", "your_key")
-    data <- a$get(path = "sold", q = "vasastan")
+    library(rbooli)
+    a <- booli("your_callerId", "your_privateKey")
+    data <- a$get(path = "sold", q = "vasastan", limit = 500)
 
 ## See also
 

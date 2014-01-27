@@ -70,7 +70,9 @@ booli <- setRefClass("booli",
         ))
         
         # Query data
-        data <- content(GET(url))[[path]]
+        res <- GET(url)
+        stop_for_status(res)
+        data <- content(res)[[path]]
         
         # Fix data structure
         if (length(data) > 0) {

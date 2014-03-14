@@ -40,7 +40,7 @@ booli <- setRefClass("booli",
         
         # Get 500 obs. per call, until limit has been reached
         while (stp < 1 && t > 0) {
-          d <- .self$get(..., limit = pmin(t, .call_limit), offset = limit - t)
+          d <- .self$get(path = path, limit = pmin(t, .call_limit), offset = limit - t, ...)
           if (!is.null(d)) {
             data <- if (limit == t) d else rbind.fill(data, d)
             t <- t - .call_limit

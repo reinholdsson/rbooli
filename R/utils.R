@@ -22,6 +22,9 @@ list_to_table <- function(x, ...) {
 fix_data <- function(x) {
   suppressWarnings({
     colwise(function(col) {
+      # Convert results to utf-8
+      col <- iconv(col, 'latin1', 'utf-8')
+      
       # return if all na
       if (all(is.na(col))) col
       # char -> numeric

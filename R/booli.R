@@ -70,7 +70,7 @@ booli <- setRefClass("booli",
         ))
         
         # Query data
-        res <- GET(url)
+        res <- GET(url, add_headers(Accept = 'application/vnd.booli-v2+json'))
         stop_for_status(res)
         data <- content(res)[[path]]
         

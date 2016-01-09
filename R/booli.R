@@ -54,10 +54,10 @@ booli <- setRefClass("booli",
         time <- as.integer(Sys.time())
         unique <- tolower(paste(sample(c(1:9, LETTERS), 16), collapse = ""))
         
-        # Create hash with Python
-        python.exec('from hashlib import sha1')
-        python.exec(sprintf('hashstr = sha1("%s"+"%s"+"%s"+"%s").hexdigest()', .self$id, time, .self$key, unique))
-        hash <- python.get('hashstr')
+        # Create hash
+        # python.exec('from hashlib import sha1')
+        # python.exec(sprintf('hashstr = sha1("%s"+"%s"+"%s"+"%s").hexdigest()', .self$id, time, .self$key, unique))
+        hash <- digest(paste0(.self$id, time, .self$key, unique), algo = 'sha1', serialize = F)
         
         # Prepare url
         url <- modify_url(url = "http://api.booli.se", path = path, query = list(

@@ -9,6 +9,6 @@ Description: An R wrapper for the Booli API
 License: AGPLv3
 Depends:
     httr,
-    rPython,
+    digest,
     rjson,
     plyr

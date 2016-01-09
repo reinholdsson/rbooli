@@ -4,10 +4,7 @@ The `rbooli` package is an R wrapper for the Booli API. More information on the 
 
 ## Install
 
-Currently, the package requires `Python` to be installed. So first make sure it is correctly installed, then run the following:
-
-    library(devtools)
-    install_github("reinholdsson/rbooli")
+    devtools::install_github("reinholdsson/rbooli")
 
 Before getting started, you have to read and accept Booli's [Terms of Use](http://www.booli.se/api/tou/) and then finally register to receive an [API key](http://www.booli.se/api/key) by e-mail.
 

@@ -8,6 +8,7 @@ Maintainer: Thomas Reinholdsson <reinholdsson@gmail.com>
 Description: An R wrapper for the Booli API
 License: AGPLv3
 Depends:
+    curl,
     httr,
     digest,
     rjson,

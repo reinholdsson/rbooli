@@ -2,7 +2,7 @@ Package: rbooli
 Type: Package
 Title: R Booli API Wrapper
 Version: 0.1
-Date: 2014-01-11
+Date: 2016-04-16
 Author: Thomas Reinholdsson
 Maintainer: Thomas Reinholdsson <reinholdsson@gmail.com>
 Description: An R wrapper for the Booli API
